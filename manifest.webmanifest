@@ -1,0 +1,9 @@
+{
+  "name": "GM Identifica - Protótipo",
+  "short_name": "GM Identifica",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f3f5f7",
+  "theme_color": "#172d43",
+  "description": "Protótipo demonstrativo com dados fictícios"
+}

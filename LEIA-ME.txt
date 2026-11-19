@@ -1,0 +1,23 @@
+GM IDENTIFICA — PROTÓTIPO PWA
+================================
+
+Conteúdo:
+- index.html: interface demonstrativa
+- manifest.webmanifest: configuração instalável
+- sw.js: cache básico para uso offline após primeira carga
+
+IMPORTANTE:
+Este projeto é somente uma demonstração com dados fictícios.
+Não use dados reais de pessoas. Esta versão não oferece autenticação Face ID,
+criptografia do banco de dados, controle institucional de acesso ou auditoria.
+Os registros ficam no armazenamento do navegador e podem ser perdidos ou
+acessados por outras pessoas com acesso ao dispositivo/navegador.
+
+Para instalar como PWA no iPhone:
+1. Publique os arquivos em um serviço de hospedagem HTTPS confiável.
+2. Abra o endereço no Safari do iPhone.
+3. Toque em Compartilhar > Adicionar à Tela de Início.
+4. Ative "Abrir como App", se a opção aparecer.
+
+O service worker e a instalação PWA exigem HTTPS (ou localhost para testes).
+O arquivo ZIP sozinho não cria automaticamente um aplicativo instalado.
