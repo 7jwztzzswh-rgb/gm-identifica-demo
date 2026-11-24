@@ -1,111 +1,21 @@
-<!doctype html>
-<html lang="pt-BR">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#172d43">
-<meta name="description" content="Protótipo demonstrativo GM Identifica">
-<link rel="manifest" href="manifest.webmanifest">
-<title>GM Identifica</title>
-<style>
-:root{--navy:#172d43;--navy2:#213d57;--gold:#c4a45b;--bg:#f3f5f7;--ink:#172331;--muted:#687787;--line:#e1e6eb}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-header{background:var(--navy);color:white;padding:calc(18px + env(safe-area-inset-top)) 18px 20px}
-.brand{display:flex;align-items:center;gap:12px}.mark{width:48px;height:48px;border-radius:14px;background:var(--gold);display:grid;place-items:center;color:var(--navy);font-size:25px;font-weight:800}
-h1{font-size:19px;letter-spacing:.5px;margin:0}.sub{font-size:11px;color:#e4d5ad;letter-spacing:1px;margin-top:4px}
-header p{margin:16px 0 0;color:#dbe3ea;font-size:13px}
-main{max-width:680px;margin:auto;padding:16px 14px 100px}
-.notice{background:#fff8e8;border:1px solid #ead8a9;color:#6b5420;border-radius:12px;padding:12px;font-size:12px;line-height:1.45;margin-bottom:16px}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}.stat,.panel,.record{background:white;border:1px solid var(--line);border-radius:15px;padding:15px}
-.stat b{display:block;font-size:25px;color:var(--navy);margin-top:6px}.muted{color:var(--muted);font-size:12px}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
-button,.button{border:0;border-radius:12px;padding:13px 14px;font-weight:650;font-size:14px;cursor:pointer}
-.primary{background:var(--navy);color:white}.secondary{background:#fff;border:1px solid var(--line);color:var(--navy)}
-.goldline{border-left:4px solid var(--gold)}
-h2{font-size:17px;margin:20px 0 10px}.field{display:block;margin:12px 0}.field span{display:block;font-size:12px;font-weight:650;margin-bottom:6px;color:#394a5a}
-input,textarea{width:100%;border:1px solid #d5dde5;border-radius:10px;padding:12px;font:inherit;background:white;color:var(--ink)}
-textarea{min-height:84px;resize:vertical}.record{display:flex;gap:12px;align-items:center;margin:9px 0;cursor:pointer}
-.avatar{width:54px;height:54px;border-radius:12px;background:#e9edf1;object-fit:cover;display:grid;place-items:center;color:var(--navy);font-size:23px;flex:none}
-.record strong{display:block;font-size:14px}.record small{color:var(--muted)}
-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);padding:8px 8px calc(8px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,1fr);z-index:5}
-nav button{background:transparent;color:var(--muted);padding:8px 2px;font-size:11px}nav button.active{color:var(--navy);background:#f2f4f6}
-.hidden{display:none!important}.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.profile{width:100%;max-height:220px;object-fit:cover;border-radius:14px;background:#eef1f4}
-footer{text-align:center;color:var(--muted);font-size:11px;padding:20px}
-</style>
-</head>
-<body>
-<header>
- <div class="brand"><div class="mark">✦</div><div><h1>GM IDENTIFICA</h1><div class="sub">PROTÓTIPO • VERSÃO 1.0</div></div></div>
- <p>Interface demonstrativa com registros exclusivamente fictícios.</p>
-</header>
-<main>
- <div class="notice"><b>AMBIENTE DE TESTE:</b> não cadastre pessoas reais. Esta versão não possui autenticação Face ID nem criptografia de banco de dados; os dados ficam neste navegador e podem ser apagados pelo sistema.</div>
- <section id="home">
-  <div class="stats"><div class="stat"><span class="muted">Registros de demonstração</span><b id="count">3</b></div><div class="stat"><span class="muted">Armazenamento</span><b style="font-size:19px">Neste iPhone</b></div></div>
-  <div class="actions"><button class="primary" onclick="show('new')">＋ Novo cadastro</button><button class="secondary" onclick="show('search')">⌕ Consultar</button></div>
-  <h2>Cadastros recentes</h2><div id="recent"></div>
- </section>
- <section id="new" class="hidden">
-  <h2>Novo cadastro fictício</h2>
-  <form id="form">
-   <label class="field"><span>Nome completo fictício *</span><input id="name" required placeholder="Ex.: Alex Modelo da Silva"></label>
-   <label class="field"><span>Identificador de demonstração *</span><input id="code" required placeholder="Ex.: DEMO-0004"></label>
-   <label class="field"><span>Data de nascimento fictícia</span><input id="birth" type="date"></label>
-   <label class="field"><span>Fotografia ilustrativa (opcional)</span><input id="photo" type="file" accept="image/*"></label>
-   <label class="field"><span>Observações de teste</span><textarea id="notes" placeholder="Somente conteúdo fictício"></textarea></label>
-   <button class="primary" type="submit" style="width:100%">Salvar registro de teste</button>
-  </form>
-  <p id="formmsg" class="muted"></p>
- </section>
- <section id="search" class="hidden">
-  <h2>Consultar registros</h2>
-  <label class="field"><span>Pesquisar por nome ou identificador</span><input id="query" placeholder="Digite para filtrar..." oninput="renderSearch()"></label>
-  <div id="results"></div>
- </section>
- <section id="detail" class="hidden">
-  <button class="secondary" onclick="show('search')">← Voltar</button>
-  <div class="panel goldline" style="margin-top:12px">
-   <img id="dphoto" class="profile hidden" alt="Fotografia fictícia">
-   <h2 id="dname"></h2><p class="muted" id="dcode"></p>
-   <p><b>Nascimento:</b> <span id="dbirth"></span></p>
-   <p><b>Observações:</b></p><p id="dnotes"></p>
-   <button class="secondary" onclick="deleteSelected()">Excluir registro de teste</button>
-  </div>
- </section>
- <section id="settings" class="hidden">
-  <h2>Segurança e informações</h2>
-  <div class="panel"><b>Face ID</b><p class="muted">Não integrado nesta versão web. Um PWA não deve ser apresentado como protegido por Face ID sem implementação e testes específicos.</p></div>
-  <div class="panel" style="margin-top:10px"><b>Dados locais</b><p class="muted">Registros de demonstração ficam no armazenamento deste navegador. Não há sincronização ou cópia de segurança.</p></div>
-  <button class="secondary" style="margin-top:12px;width:100%" onclick="resetDemo()">Restaurar dados fictícios iniciais</button>
- </section>
- <footer>GM Identifica • Protótipo não oficial • Uso demonstrativo</footer>
-</main>
-<nav>
- <button id="nav-home" class="active" onclick="show('home')">⌂<br>Início</button>
- <button id="nav-new" onclick="show('new')">＋<br>Cadastro</button>
- <button id="nav-search" onclick="show('search')">⌕<br>Consulta</button>
- <button id="nav-settings" onclick="show('settings')">⚙<br>Ajustes</button>
-</nav>
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#172f46"><link rel="manifest" href="manifest.webmanifest"><title>GM Identifica 2.0</title><style>
+:root{--n:#172f46;--g:#d8b96c;--bg:#f1f4f7;--line:#dce3e9}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#1d2937;font:16px -apple-system,BlinkMacSystemFont,sans-serif}header{background:var(--n);color:white;padding:25px 18px;border-radius:0 0 22px 22px}.brand{display:flex;gap:13px;align-items:center}.mark{background:var(--g);color:var(--n);padding:15px;border-radius:15px;font-size:25px}h1{font-size:21px;margin:0}header small{color:#e8d59e;letter-spacing:2px}header p{color:#e4eaf0}main{max-width:720px;margin:auto;padding:16px 14px 100px}.notice{background:#fff8e9;border:1px solid #ead7a5;color:#725a25;border-radius:15px;padding:14px;line-height:1.4}.view{display:none}.view.active{display:block}h2{font-size:21px;margin:22px 0 12px}.stats,.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:15px 0}.stat,.panel,.record,.result{background:white;border:1px solid var(--line);border-radius:17px;padding:15px}.stat span{display:block;color:#66788a;font-size:13px}.stat b{display:block;font-size:23px;margin-top:7px}.record{display:flex;gap:12px;align-items:center;margin:9px 0}.avatar{width:52px;height:52px;border-radius:14px;background:#e9eef2;display:grid;place-items:center;font-size:24px}.record small{display:block;color:#66788a}button{border:0;border-radius:13px;padding:14px;background:var(--n);color:white;font-weight:700;font-size:15px}button.secondary{background:white;color:var(--n);border:1px solid var(--line)}button.gold{background:var(--g);color:var(--n);width:100%;margin-top:12px}label{display:block;font-weight:650;margin:13px 0 6px}input,textarea{width:100%;padding:13px;border:1px solid var(--line);border-radius:11px;font:inherit;background:white}textarea{min-height:80px}.upload{background:white;border:2px dashed #c7d1da;padding:18px;border-radius:15px;text-align:center;color:#66788a}.pill{display:inline-block;background:#fff1cf;color:#725a25;border-radius:20px;padding:5px 9px;font-size:12px;font-weight:700}nav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid var(--line);display:flex;padding:8px 4px calc(8px + env(safe-area-inset-bottom))}nav button{flex:1;background:transparent;color:#66788a;font-size:12px;padding:8px 2px}nav button.active{background:#eef2f5;color:var(--n)}footer{text-align:center;color:#66788a;font-size:12px;margin:24px}
+</style></head><body><header><div class="brand"><div class="mark">✦</div><div><h1>GM IDENTIFICA</h1><small>PROTÓTIPO • VERSÃO 2.0</small></div></div><p>Ambiente demonstrativo com dados e imagens sintéticas.</p></header><main>
+<div class="notice"><b>AMBIENTE DE TESTE:</b> use somente exemplos fictícios. A consulta por imagem é uma simulação de interface; não realiza reconhecimento facial nem calcula semelhança biométrica.</div>
+<section id="home" class="view active"><div class="stats"><div class="stat"><span>Registros fictícios</span><b id="count">3</b></div><div class="stat"><span>Armazenamento</span><b>Local</b></div></div><div class="actions"><button onclick="show('cadastro')">＋ Novo cadastro</button><button class="secondary" onclick="show('consulta')">⌕ Consultar</button></div><h2>Cadastros de demonstração</h2><div id="records"></div></section>
+<section id="cadastro" class="view"><h2>Novo cadastro fictício</h2><label>Nome demonstrativo</label><input id="nome" placeholder="Pessoa Demonstração"><label>Identificador interno</label><input id="codigo" placeholder="DEMO-0004"><label>Data de nascimento fictícia</label><input id="nasc" type="date"><label>Observações</label><textarea id="obs" placeholder="Informações fictícias"></textarea><button class="gold" onclick="save()">Salvar registro demonstrativo</button></section>
+<section id="consulta" class="view"><h2>Consulta por nome ou identificador</h2><input id="termo" placeholder="Digite nome ou código" oninput="search()"><div id="found"></div><h2>Consulta demonstrativa por imagem</h2><div class="notice">A imagem selecionada não será analisada, comparada ou enviada a uma base biométrica.</div><div class="upload"><b>Selecionar imagem sintética</b><p>Use avatar ilustrativo ou imagem gerada, sem foto de pessoa real.</p><input id="file" type="file" accept="image/*" onchange="preview(event)"><div id="prev"></div></div><button class="gold" onclick="simulate()">Simular consulta demonstrativa</button><div id="sim"></div></section>
+<section id="ajustes" class="view"><h2>Ajustes</h2><div class="panel"><b>GM Identifica 2.0</b><p>Protótipo local para avaliação de navegação.</p><span class="pill">Reconhecimento facial não implementado</span><p>Sem Face ID, criptografia ou autenticação.</p></div></section><footer>GM IDENTIFICA • PROTÓTIPO EDUCACIONAL • DADOS FICTÍCIOS</footer></main>
+<nav><button class="active" data-id="home" onclick="show('home')">⌂<br>Início</button><button data-id="cadastro" onclick="show('cadastro')">＋<br>Cadastro</button><button data-id="consulta" onclick="show('consulta')">⌕<br>Consulta</button><button data-id="ajustes" onclick="show('ajustes')">⚙<br>Ajustes</button></nav>
 <script>
-const KEY='gm-identifica-demo-v1';
-const seed=[
- {id:1,name:'João Exemplo da Silva',code:'DEMO-0001',birth:'1990-04-15',notes:'Registro inteiramente fictício.'},
- {id:2,name:'Maria Exemplo Souza',code:'DEMO-0002',birth:'1987-09-22',notes:'Cadastro de demonstração.'},
- {id:3,name:'Carlos Modelo Pereira',code:'DEMO-0003',birth:'1995-12-08',notes:'Sem observações adicionais.'}
-];
-let data=JSON.parse(localStorage.getItem(KEY)||'null')||seed;
-let selected=null;
-function persist(){localStorage.setItem(KEY,JSON.stringify(data));renderHome();renderSearch()}
-function show(id){document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));let n=document.getElementById('nav-'+id);if(n)n.classList.add('active');if(id==='search')renderSearch();window.scrollTo(0,0)}
-function card(r){return `<div class="record" onclick="detail(${r.id})"><div class="avatar">${r.photo?`<img src="${r.photo}" style="width:54px;height:54px;object-fit:cover;border-radius:12px">`:'♙'}</div><div><strong>${esc(r.name)}</strong><small>${esc(r.code)}</small></div></div>`}
+const K='gm-id-v2';let rows=JSON.parse(localStorage.getItem(K)||'null')||[{nome:'Carlos Modelo Pereira',codigo:'DEMO-0003'},{nome:'Maria Exemplo Souza',codigo:'DEMO-0002'},{nome:'João Exemplo da Silva',codigo:'DEMO-0001'}];
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function renderHome(){document.getElementById('count').textContent=data.length;document.getElementById('recent').innerHTML=data.slice(-4).reverse().map(card).join('')||'<p class="muted">Nenhum registro de demonstração.</p>'}
-function renderSearch(){let q=(document.getElementById('query')?.value||'').toLowerCase();document.getElementById('results').innerHTML=data.filter(r=>(r.name+' '+r.code).toLowerCase().includes(q)).map(card).join('')||'<p class="muted">Nenhum resultado.</p>'}
-function detail(id){selected=data.find(r=>r.id===id);if(!selected)return;document.getElementById('dname').textContent=selected.name;document.getElementById('dcode').textContent=selected.code;document.getElementById('dbirth').textContent=selected.birth?new Date(selected.birth+'T12:00:00').toLocaleDateString('pt-BR'):'Não informado';document.getElementById('dnotes').textContent=selected.notes||'Nenhuma';let img=document.getElementById('dphoto');if(selected.photo){img.src=selected.photo;img.classList.remove('hidden')}else img.classList.add('hidden');show('detail')}
-function deleteSelected(){if(!selected)return;data=data.filter(r=>r.id!==selected.id);persist();show('search')}
-document.getElementById('form').addEventListener('submit',async e=>{e.preventDefault();let code=document.getElementById('code').value.trim();if(data.some(r=>r.code.toLowerCase()===code.toLowerCase())){document.getElementById('formmsg').textContent='Identificador já utilizado.';return}let file=document.getElementById('photo').files[0],photo='';if(file){if(file.size>1200000){document.getElementById('formmsg').textContent='Imagem muito grande. Escolha uma imagem menor que 1,2 MB.';return}photo=await new Promise(resolve=>{let fr=new FileReader();fr.onload=()=>resolve(fr.result);fr.readAsDataURL(file)})}data.push({id:Date.now(),name:document.getElementById('name').value.trim(),code,birth:document.getElementById('birth').value,notes:document.getElementById('notes').value.trim(),photo});persist();e.target.reset();document.getElementById('formmsg').textContent='Registro fictício salvo neste navegador.';});
-function resetDemo(){if(confirm('Restaurar os três registros fictícios iniciais?')){data=seed;persist();show('home')}}
-renderHome();renderSearch();
-if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
-</script>
-</body></html>
+function card(r){return `<div class="record"><div class="avatar">♙</div><div><b>${esc(r.nome)}</b><small>${esc(r.codigo)}</small></div></div>`}
+function render(){count.textContent=rows.length;records.innerHTML=rows.slice().reverse().map(card).join('')}
+function show(id){document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.id===id));if(id==='consulta')search();window.scrollTo(0,0)}
+function save(){let n=nome.value.trim(),c=codigo.value.trim();if(!n||!c){alert('Preencha nome e identificador fictícios.');return}rows.push({nome:n,codigo:c,nascimento:nasc.value,obs:obs.value});localStorage.setItem(K,JSON.stringify(rows));['nome','codigo','nasc','obs'].forEach(x=>document.getElementById(x).value='');render();show('home')}
+function search(){let q=(termo.value||'').toLowerCase(),a=rows.filter(r=>(r.nome+' '+r.codigo).toLowerCase().includes(q));found.innerHTML=a.length?a.map(card).join(''):'<p>Nenhum registro fictício encontrado.</p>'}
+function preview(e){let f=e.target.files[0];if(!f)return;let u=URL.createObjectURL(f);prev.innerHTML=`<p>Pré-visualização local:</p><img src="${u}" alt="Imagem selecionada" style="max-width:130px;max-height:130px;border-radius:12px">`}
+function simulate(){sim.innerHTML=`<div class="result"><span class="pill">SIMULAÇÃO — NÃO É RECONHECIMENTO FACIAL</span><h3>Resultado de demonstração</h3><p>Não houve comparação da imagem nem determinação de identidade. O registro abaixo é apenas um exemplo fictício, sem relação com a imagem selecionada.</p>${rows[0]?card(rows[0]):'Nenhum registro de exemplo.'}</div>`}
+render();if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script></body></html>
